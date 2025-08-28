@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build Apache2 Docker Image') {
+            steps {
+                sh '''
+                  docker build -t my-apache2 .
+                '''
+            }
+        }
+
+        stage('Run Apache2 Container') {
+            steps {
+                sh '''
+                  docker run -d --name apache2 -p 8080:80 my-apache2
+                  docker ps -a
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Apache2 Docker container is running on port 8080!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
